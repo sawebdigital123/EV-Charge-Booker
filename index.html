@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EV Charging Slot Booking</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <header class="app-header">
+        <div class="brand">
+            <div class="logo">⚡</div>
+            <div class="title">EV Charge Booker</div>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="Primary">
+            <button class="tab active" data-tab="user" role="tab" aria-selected="true">User</button>
+            <button class="tab" data-tab="admin" role="tab" aria-selected="false">Admin</button>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- USER MODULE -->
+        <section id="user" class="panel active" role="tabpanel" aria-labelledby="User">
+            <div class="auth-card" id="userLoginCard">
+                <h3>User Login</h3>
+                <form id="userLoginForm" class="form" autocomplete="on">
+                    <div class="field">
+                        <label for="userLoginEmail">Email</label>
+                        <input id="userLoginEmail" type="email" required />
+                    </div>
+                    <div class="field">
+                        <label for="userLoginPassword">Password</label>
+                        <input id="userLoginPassword" type="password" minlength="6" required />
+                    </div>
+                    <button type="submit" class="btn primary">Login</button>
+                </form>
+                <div style="margin-top:8px;color:#a8b3cf">Don't have an account? <button class="link-btn" id="toUserRegister">Register</button></div>
+            </div>
+
+            <div class="auth-card hidden" id="userRegisterCard">
+                <h3>User Registration</h3>
+                <form id="userRegisterForm" class="form" autocomplete="on">
+                    <div class="field">
+                        <label for="userRegisterName">Full Name</label>
+                        <input id="userRegisterName" type="text" required />
+                    </div>
+                    <div class="field">
+                        <label for="userRegisterEmail">Email</label>
+                        <input id="userRegisterEmail" type="email" required />
+                    </div>
+                    <div class="field">
+                        <label for="userRegisterPassword">Password</label>
+                        <input id="userRegisterPassword" type="password" minlength="6" required />
+                    </div>
+                    <button type="submit" class="btn primary">Create account</button>
+                </form>
+                <div style="margin-top:8px;color:#a8b3cf">Already have an account? <button class="link-btn" id="toUserLogin">Login</button></div>
+            </div>
+
+            <div id="userApp" class="app-card hidden">
+                <div class="toolbar">
+                    <div class="search">
+                        <input id="searchInput" type="text" placeholder="Search by name or address" />
+                        <button id="useMyLocation" class="btn">Use my location</button>
+                    </div>
+                    <div class="filters">
+                        <select id="powerFilter">
+                            <option value="">All power levels</option>
+                            <option value="slow">Slow</option>
+                            <option value="fast">Fast</option>
+                            <option value="ultra">Ultra-fast</option>
+                        </select>
+                    </div>
+                    <div class="spacer"></div>
+                    <button id="userLogout" class="btn ghost">Logout</button>
+                </div>
+
+                <div class="grid">
+                    <div class="map" id="map" aria-label="Map of nearby charging stations"></div>
+                    <div class="list" id="stationList" aria-live="polite"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN MODULE -->
+        <section id="admin" class="panel" role="tabpanel" aria-labelledby="Admin">
+            <div class="auth-card" id="adminLoginCard">
+                <h3>Admin Login</h3>
+                <form id="adminLoginForm" class="form" autocomplete="on">
+                    <div class="field">
+                        <label for="adminLoginEmail">Email</label>
+                        <input id="adminLoginEmail" type="email" required />
+                    </div>
+                    <div class="field">
+                        <label for="adminLoginPassword">Password</label>
+                        <input id="adminLoginPassword" type="password" minlength="6" required />
+                    </div>
+                    <button type="submit" class="btn primary">Login</button>
+                </form>
+                <div style="margin-top:8px;color:#a8b3cf">Need an account? <button class="link-btn" id="toAdminRegister">Register</button></div>
+            </div>
+
+            <div class="auth-card hidden" id="adminRegisterCard">
+                <h3>Admin Registration</h3>
+                <form id="adminRegisterForm" class="form" autocomplete="on">
+                    <div class="field">
+                        <label for="adminRegisterName">Full Name</label>
+                        <input id="adminRegisterName" type="text" required />
+                    </div>
+                    <div class="field">
+                        <label for="adminRegisterEmail">Email</label>
+                        <input id="adminRegisterEmail" type="email" required />
+                    </div>
+                    <div class="field">
+                        <label for="adminRegisterPassword">Password</label>
+                        <input id="adminRegisterPassword" type="password" minlength="6" required />
+                    </div>
+                    <button type="submit" class="btn primary">Create admin</button>
+                </form>
+                <div style="margin-top:8px;color:#a8b3cf">Already registered? <button class="link-btn" id="toAdminLogin">Login</button></div>
+            </div>
+
+            <div id="adminApp" class="app-card hidden">
+                <div class="toolbar">
+                    <div class="tabs secondary" role="tablist" aria-label="Admin sections">
+                        <button class="subtab active" data-subtab="stations">Stations</button>
+                        <button class="subtab" data-subtab="slots">Slots</button>
+                    </div>
+                    <div class="spacer"></div>
+                    <button id="adminLogout" class="btn ghost">Logout</button>
+                </div>
+
+                <div id="stations" class="subpanel active">
+                    <form id="stationForm" class="form form-inline">
+                        <input id="stationId" type="hidden" />
+                        <div class="field">
+                            <label for="stationName">Name</label>
+                            <input id="stationName" type="text" required />
+                        </div>
+                        <div class="field">
+                            <label for="stationAddress">Address</label>
+                            <input id="stationAddress" type="text" required />
+                        </div>
+                        <div class="field">
+                            <label for="stationPhone">Mobile</label>
+                            <input id="stationPhone" type="tel" pattern="[0-9+\-() ]{7,}" required />
+                        </div>
+                        <div class="field">
+                            <label for="stationLat">Latitude</label>
+                            <input id="stationLat" type="number" step="any" required />
+                        </div>
+                        <div class="field">
+                            <label for="stationLng">Longitude</label>
+                            <input id="stationLng" type="number" step="any" required />
+                        </div>
+                        <div class="field">
+                            <label for="stationPower">Power</label>
+                            <select id="stationPower" required>
+                                <option value="slow">Slow</option>
+                                <option value="fast">Fast</option>
+                                <option value="ultra">Ultra-fast</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn primary" id="saveStation">Save Station</button>
+                        <button type="button" class="btn" id="resetStationForm">Reset</button>
+                    </form>
+
+                    <div id="stationTable" class="table"></div>
+                </div>
+
+                <div id="slots" class="subpanel">
+                    <form id="slotForm" class="form form-inline">
+                        <div class="field">
+                            <label for="slotStationSelect">Station</label>
+                            <select id="slotStationSelect" required></select>
+                        </div>
+                        <div class="field">
+                            <label for="slotCount">Total Slots</label>
+                            <input id="slotCount" type="number" min="1" value="4" required />
+                        </div>
+                        <div class="field">
+                            <label for="slotDuration">Slot Duration (mins)</label>
+                            <input id="slotDuration" type="number" min="15" step="15" value="60" required />
+                        </div>
+                        <button type="submit" class="btn primary">Save Slot Config</button>
+                    </form>
+                    <div id="slotSummary" class="slot-summary"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="detailsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="detailsTitle">Station Details</h3>
+                <button id="closeModal" class="icon-btn" aria-label="Close">✖</button>
+            </div>
+            <div class="modal-body">
+                <div class="details-grid">
+                    <div>
+                        <div class="detail-item"><span class="label">Name</span><span id="dName"></span></div>
+                        <div class="detail-item"><span class="label">Address</span><span id="dAddress"></span></div>
+                        <div class="detail-item"><span class="label">Mobile</span><span id="dPhone"></span></div>
+                        <div class="detail-item"><span class="label">Power</span><span id="dPower"></span></div>
+                        <div class="detail-item"><span class="label">Vacancy</span><span id="dVacancy"></span></div>
+                    </div>
+                    <div id="miniMap" class="mini-map" aria-label="Station map"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="bookSlot" class="btn primary">Book Slot</button>
+            </div>
+        </div>
+    </div>
+
+    <template id="stationRowTemplate">
+        <div class="row">
+            <div class="cell name"></div>
+            <div class="cell addr"></div>
+            <div class="cell phone"></div>
+            <div class="cell power"></div>
+            <div class="cell actions">
+                <button class="btn xs" data-action="edit">Edit</button>
+                <button class="btn xs danger" data-action="delete">Delete</button>
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+    <!-- To enable Google Maps, replace YOUR_API_KEY and uncomment below -->
+    <!--
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+    -->
+</body>
+</html>
+
+
